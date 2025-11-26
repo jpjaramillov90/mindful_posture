@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "933682468146",
+    "project_id": "mindfulposture",
+    "storage_bucket": "mindfulposture.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933682468146:android:a4dcb9154f35283d1a732b",
+        "android_client_info": {
+          "package_name": "com.mindfulposture.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO7uDTdNUbA1QauAs39C68xs1gf71dTDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
