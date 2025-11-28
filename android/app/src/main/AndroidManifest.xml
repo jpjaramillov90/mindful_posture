@@ -1,44 +1,58 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mindfulposture.app">
 
-    <application
-        android:label="mindful_posture"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/LaunchTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
-
-            <!-- Tema visible antes de que Flutter cargue -->
-            <meta-data
-                android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/NormalTheme" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!-- Requerido para compatibilidad con Flutter -->
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
-    </application>
-
-    <!-- Visibilidad de procesos de texto (necesario por Flutter) -->
+    <!-- Necesario para manejar intents externos -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT" />
             <data android:mimeType="text/plain" />
         </intent>
     </queries>
+
+    <application
+        android:name="${applicationName}"
+        android:label="Mindful Posture"
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="false">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="
+                orientation|
+                keyboardHidden|
+                keyboard|
+                screenSize|
+                smallestScreenSize|
+                locale|
+                layoutDirection|
+                fontScale|
+                screenLayout|
+                density|
+                uiMode">
+
+            <!-- Tema visible antes de que Flutter arranque -->
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+
+            <!-- Launcher -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <!-- Requerido para Flutter Embedding v2 -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+    </application>
 
 </manifest>
