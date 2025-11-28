@@ -1,19 +1,21 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../services/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RoutineTimer extends StatefulWidget {
   final String title;
   final String description;
-  final int durationSeconds; // cambio: duración en segundos
-  final VoidCallback? onComplete;
+  final int durationSeconds;
+  final String routineId;
 
   const RoutineTimer({
     super.key,
     required this.title,
     required this.description,
     required this.durationSeconds,
-    this.onComplete,
+    required this.routineId,
   });
 
   @override
@@ -25,12 +27,19 @@ class _RoutineTimerState extends State<RoutineTimer> {
   Timer? timer;
   bool isRunning = false;
 
+  final FirestoreService firestore = FirestoreService();
+  final user = FirebaseAuth.instance.currentUser!;
+
   @override
   void initState() {
     super.initState();
-    secondsRemaining = widget.durationSeconds; // directamente en segundos
+    secondsRemaining = widget.durationSeconds;
+    _checkResetRoutines();
   }
 
+  // --------------------
+  // Temporizador
+  // --------------------
   void startTimer() {
     if (isRunning) return;
     isRunning = true;
@@ -41,7 +50,7 @@ class _RoutineTimerState extends State<RoutineTimer> {
         } else {
           timer.cancel();
           isRunning = false;
-          if (widget.onComplete != null) widget.onComplete!();
+          _markRoutineComplete();
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(const SnackBar(content: Text('¡Rutina completada!')));
@@ -66,6 +75,26 @@ class _RoutineTimerState extends State<RoutineTimer> {
     final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
     final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
+  }
+
+  // --------------------
+  // Marcar rutina como completada
+  // --------------------
+  Future<void> _markRoutineComplete() async {
+    await firestore.updateRoutine(widget.routineId, {'completed': true});
+  }
+
+  // --------------------
+  // Revisar y resetear rutinas cada 8h
+  // --------------------
+  Future<void> _checkResetRoutines() async {
+    final lastReset = await firestore.getLastReset(user.uid);
+    final now = DateTime.now();
+
+    if (lastReset == null || now.difference(lastReset).inHours >= 8) {
+      await firestore.resetAllRoutines(user.uid);
+      await firestore.updateLastReset(user.uid, now);
+    }
   }
 
   @override
