@@ -25,6 +25,9 @@ dependencies:
   proximity_sensor: ^1.3.9
   flutter_launcher_icons: ^0.14.4
 
+  vibration: ^2.0.1
+  audioplayers: ^6.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -35,6 +38,7 @@ flutter:
 
   assets:
     - assets/logo.png
+    - assets/sounds/completed.mp3
 
   fonts:
     - family: Montserrat

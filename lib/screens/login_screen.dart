@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'register_screen.dart';
-import 'main_navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool loading = false;
   String? errorMessage;
+  bool obscurePassword = true; // Estado para mostrar/ocultar contraseña
 
   @override
   Widget build(BuildContext context) {
@@ -27,75 +27,99 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text(
+                // Logo
+                Image.asset('assets/logo.png', width: 120, height: 120),
+                const SizedBox(height: 20),
+
+                // Nombre de la app
+                const Text(
                   "MindfulPosture",
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
-
                 const SizedBox(height: 40),
 
+                // Campo correo
                 TextField(
                   controller: emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Correo",
                     border: OutlineInputBorder(),
                   ),
                 ),
-
                 const SizedBox(height: 20),
 
+                // Campo contraseña con mostrar/ocultar
                 TextField(
                   controller: passwordController,
-                  obscureText: true,
+                  obscureText: obscurePassword,
                   decoration: InputDecoration(
                     labelText: "Contraseña",
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          obscurePassword = !obscurePassword;
+                        });
+                      },
+                    ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
 
+                // Mensaje de error
                 if (errorMessage != null)
-                  Text(errorMessage!, style: TextStyle(color: Colors.red)),
-
+                  Text(
+                    errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 const SizedBox(height: 20),
 
-                ElevatedButton(
-                  onPressed: () async {
-                    setState(() => loading = true);
+                // Botón Iniciar sesión centrado y ancho relativo
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      setState(() => loading = true);
 
-                    final error = await auth.login(
-                      emailController.text.trim(),
-                      passwordController.text.trim(),
-                    );
-
-                    setState(() => loading = false);
-
-                    if (error == null) {
-                      // Login OK
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => MainNavigation()),
+                      final error = await auth.login(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
                       );
-                    } else {
-                      setState(() => errorMessage = error);
-                    }
-                  },
-                  child: loading
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text("Iniciar sesión"),
-                ),
 
+                      setState(() => loading = false);
+
+                      if (error == null) {
+                        // Login OK
+                        Navigator.pop(context);
+                      } else {
+                        setState(() => errorMessage = error);
+                      }
+                    },
+                    child: loading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text("Iniciar sesión"),
+                  ),
+                ),
                 const SizedBox(height: 20),
 
+                // Botón Crear cuenta
                 TextButton(
                   onPressed: () {
+                    // Navegar a pantalla de registro
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => RegisterScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterScreen(),
+                      ),
                     );
                   },
-                  child: Text("Crear una cuenta"),
+                  child: const Text("Crear una cuenta"),
                 ),
               ],
             ),

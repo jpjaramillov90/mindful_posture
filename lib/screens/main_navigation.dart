@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'home_screen.dart';
 import 'routines_screen.dart';
 import 'sensors_screen.dart';
@@ -7,7 +9,15 @@ import '../theme/app_colors.dart';
 
 class MainNavigation extends StatefulWidget {
   final int initialIndex;
-  const MainNavigation({super.key, this.initialIndex = 0});
+  final String name;
+  final String lastName;
+
+  const MainNavigation({
+    super.key,
+    this.initialIndex = 0,
+    required this.name,
+    required this.lastName,
+  });
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -26,17 +36,49 @@ class _MainNavigationState extends State<MainNavigation> {
     setState(() => currentIndex = index);
   }
 
+  void _confirmLogout() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Cerrar sesión"),
+        content: const Text("¿Estás seguro de que deseas cerrar sesión?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // cancelar
+            child: const Text("Cancelar"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pop(); // cerrar diálogo
+            },
+            child: const Text("Cerrar sesión"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // importantísimo: construir las pantallas aquí
     final screens = [
-      HomeScreen(),
+      HomeScreen(name: widget.name, lastName: widget.lastName),
       RoutinesScreen(),
       SensorsScreen(),
       LogsScreen(),
     ];
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Hola, ${widget.name} ${widget.lastName}"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: "Cerrar sesión",
+            onPressed: _confirmLogout,
+          ),
+        ],
+      ),
       body: screens[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
